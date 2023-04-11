@@ -1,0 +1,41 @@
+---
+Parameters:
+  DBInstanceName:
+    Type: String
+    Description: The name of the RDS DB instance
+    Default: my-rds-instance
+  DBInstanceClass:
+    Type: String
+    Description: The instance class for the RDS DB instance
+    Default: db.t2.micro
+    AllowedValues:
+      - db.t2.micro
+      - db.t2.small
+      - db.t2.medium
+  DBName:
+    Type: String
+    Description: The name of the initial database
+    Default: mydb
+  DBUsername:
+    Type: String
+    Description: The username for the initial database user
+    Default: admin
+  DBPassword:
+    Type: String
+    Description: The password for the initial database user
+    NoEcho: true
+Resources:
+  MyDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DBInstanceName
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: 20
+      DBName: !Ref DBName
+      Engine: postgres
+      EngineVersion: '12.7'
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      PubliclyAccessible: false
+      StorageType: gp2
+      MultiAZ: false
