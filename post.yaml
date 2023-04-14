@@ -1,4 +1,3 @@
----
 Parameters:
   DBInstanceName:
     Type: String
@@ -24,7 +23,26 @@ Parameters:
     Type: String
     Description: The password for the initial database user
     NoEcho: true
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: Select the VPC to launch the RDS instance in
+  RDSSecurityGroupName:
+    Type: String
+    Description: The name of the new security group for the RDS instance
+    Default: MyRDSSecurityGroup
+
 Resources:
+  MyRDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS instance
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0
+
   MyDB:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -39,3 +57,10 @@ Resources:
       PubliclyAccessible: false
       StorageType: gp2
       MultiAZ: false
+      VPCSecurityGroups:
+        - !Ref MyRDSSecurityGroup
+
+Outputs:
+  RDSSecurityGroupId:
+    Value: !Ref MyRDSSecurityGroup
+    Description: The ID of the new security group for the RDS instance
